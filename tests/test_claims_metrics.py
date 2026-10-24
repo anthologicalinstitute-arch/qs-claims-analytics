@@ -2,7 +2,11 @@
 import csv
 import unittest
 from pathlib import Path
+import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from src.claims_metrics import calculate_metrics
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "data" / "synthetic-claims.csv"
 EXPOSURE_FILE = ROOT / "data" / "synthetic-exposure.csv"
@@ -154,6 +158,32 @@ class ClaimsMetricsTests(unittest.TestCase):
         self.assertEqual(
             len(policy_ids), len(set(policy_ids)),
             "Duplicate policy IDs in exposure dataset"
+        )
+
+    def test_calculated_metrics_report(self):
+        metrics = calculate_metrics()
+
+        self.assertEqual(metrics["claim_count"], 10)
+        self.assertAlmostEqual(
+            metrics["total_exposure_years"], 20.0
+        )
+        self.assertAlmostEqual(
+            metrics["claim_frequency_per_policy_year"], 0.5
+        )
+        self.assertAlmostEqual(
+            metrics["total_incurred_loss"], 22000.0
+        )
+        self.assertAlmostEqual(
+            metrics["total_paid_loss"], 16200.0
+        )
+        self.assertAlmostEqual(
+            metrics["average_severity"], 2200.0
+        )
+        self.assertAlmostEqual(
+            metrics["average_processing_days"], 19.5
+        )
+        self.assertAlmostEqual(
+            metrics["reopening_rate"], 0.30
         )
 
 if __name__ == "__main__":
