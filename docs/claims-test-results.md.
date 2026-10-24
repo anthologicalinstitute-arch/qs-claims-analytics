@@ -1,0 +1,38 @@
+Claims Analytics Test Results
+
+Test Execution
+
+- Repository: "qs-claims-analytics"
+- Automation: GitHub Actions
+- Workflow run: Claims Analytics Test #8
+- Reported test count: 15 Python unit tests
+- Workflow status: Successful, with all seven workflow steps showing green checks
+- Execution environment: Ubuntu, Python 3.12
+
+Coverage
+
+The test suite includes checks for:
+
+- Claim counts and unique claim identifiers
+- Incurred and paid losses
+- Average claim severity
+- Average processing time
+- Claim reopening rate
+- Claim frequency using policy-year exposure
+- Claim-to-policy references
+- Policy-level claim-count reconciliation
+- Basic data-quality constraints
+
+Interpretation and Limitations
+
+A successful test run indicates that the implemented tests passed for the data and code included in that run. It does not establish predictive accuracy, actuarial validity, regulatory compliance, or performance on real insurance portfolios.
+
+The datasets used in this project are synthetic and intended for reproducible research and software validation.
+
+Reproducibility
+
+The automated workflow executes:
+
+"python -m unittest discover -s tests -v"
+
+The workflow is configured to run on pushes to "main" and pull requests targeting "main".
