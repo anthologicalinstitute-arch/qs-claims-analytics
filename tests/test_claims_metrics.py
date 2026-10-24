@@ -71,5 +71,34 @@ class ClaimsMetricsTests(unittest.TestCase):
         self.assertAlmostEqual(total_claims / total_exposure, 0.5)
 
 
+    def test_claims_reference_known_policies(self):
+        exposure_rows = read_csv(EXPOSURE_FILE)
+        policy_ids = {row["policy_id"] for row in exposure_rows}
+
+        claim_policy_ids = {
+            row["policy_id"] for row in self.claims
+        }
+
+        self.assertTrue(claim_policy_ids.issubset(policy_ids))
+
+    def test_policy_claim_counts_reconcile(self):
+        exposure_rows = read_csv(EXPOSURE_FILE)
+
+        actual_counts = {}
+        for row in self.claims:
+            policy_id = row["policy_id"]
+            actual_counts[policy_id] = (
+                actual_counts.get(policy_id, 0) + 1
+            )
+
+        for row in exposure_rows:
+            policy_id = row["policy_id"]
+            expected = int(row["claim_count"])
+            actual = actual_counts.get(policy_id, 0)
+            self.assertEqual(
+                actual, expected,
+                f"Claim count mismatch for {policy_id}"
+            )
+
 if __name__ == "__main__":
     unittest.main()
