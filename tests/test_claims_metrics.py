@@ -100,5 +100,61 @@ class ClaimsMetricsTests(unittest.TestCase):
                 f"Claim count mismatch for {policy_id}"
             )
 
+    def test_required_claim_fields_are_present(self):
+        required_fields = {
+            "claim_id",
+            "policy_id",
+            "incurred_loss",
+            "paid_loss",
+            "processing_days",
+            "reopened",
+        }
+
+        for index, row in enumerate(self.claims, start=1):
+            for field in required_fields:
+                self.assertTrue(
+                    row.get(field, "").strip(),
+                    f"Missing {field} in claim row {index}"
+                )
+
+    def test_loss_values_are_nonnegative(self):
+        for row in self.claims:
+            with self.subTest(claim_id=row["claim_id"]):
+                incurred = float(row["incurred_loss"])
+                paid = float(row["paid_loss"])
+
+                self.assertGreaterEqual(incurred, 0)
+                self.assertGreaterEqual(paid, 0)
+                self.assertLessEqual(
+                    paid, incurred,
+                    "Paid loss exceeds incurred loss"
+                )
+
+    def test_processing_days_are_nonnegative(self):
+        for row in self.claims:
+            with self.subTest(claim_id=row["claim_id"]):
+                self.assertGreaterEqual(
+                    float(row["processing_days"]), 0
+                )
+
+    def test_reopened_values_are_valid(self):
+        allowed_values = {"true", "false"}
+
+        for row in self.claims:
+            with self.subTest(claim_id=row["claim_id"]):
+                self.assertIn(
+                    row["reopened"].strip().lower(),
+                    allowed_values
+                )
+
+    def test_exposure_policy_ids_are_unique(self):
+        exposure_rows = read_csv(EXPOSURE_FILE)
+        policy_ids = [row["policy_id"] for row in exposure_rows]
+
+        self.assertEqual(
+            len(policy_ids), len(set(policy_ids)),
+            "Duplicate policy IDs in exposure dataset"
+        )
+
 if __name__ == "__main__":
     unittest.main()
