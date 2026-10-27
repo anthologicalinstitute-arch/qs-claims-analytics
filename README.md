@@ -7,7 +7,7 @@ Python supports statistical claims analysis, cost modeling and anomaly detection
 - Validated claims data loader with schema and business-rule checks
 - Rule-based anomaly detection (high severity, long processing time, high-value reopenings)
 - Core claims metrics: frequency, severity, processing time, reopening rate
-- Anomaly impact metrics: count, rate, total incurred, share of total loss
+- Anomaly impact metrics: count, rate, total incurred, share of total loss 
 - JSON report generation
 
 ## Quick Start
